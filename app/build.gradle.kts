@@ -30,6 +30,9 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.lifecycle.viewmodel)
+
     debugImplementation(libs.androidx.compose.ui.tooling)
+
     testImplementation(libs.kotlin.test.junit)
 }
