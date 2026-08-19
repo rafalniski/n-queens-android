@@ -16,6 +16,30 @@ object NQueensEngine {
         return sameRow || sameColumn || sameDiagonal
     }
 
+    fun toggleQueen(
+        state: GameState,
+        position: Position,
+    ): GameState {
+        require(state.isPositionInsideBoard(position)) {
+            "Position must be inside the board."
+        }
+        val updatedQueens = when {
+            position in state.queens -> state.queens - position
+            state.queens.size < state.boardSize -> state.queens + position
+            else -> state.queens
+        }
+        return state.copy(queens = updatedQueens)
+    }
+
+    fun isSolved(state: GameState): Boolean {
+        val hasRequiredNumberOfQueens =
+            state.queens.size == state.boardSize
+
+        val hasNoConflicts = findConflictingQueens(state.queens).isEmpty()
+
+        return hasRequiredNumberOfQueens && hasNoConflicts
+    }
+
     fun findConflictingQueens(
         queens: Set<Position>,
     ): Set<Position> {

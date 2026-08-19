@@ -13,14 +13,14 @@ data class GameState(
             "The number of queens must not exceed the board size."
         }
 
-        require(queens.all { position -> position.isInsideBoard() }) {
+        require(queens.all { position -> isPositionInsideBoard(position) }) {
             "Every queen must be inside the board."
         }
     }
 
-    private fun Position.isInsideBoard(): Boolean {
-        return row in 0 until boardSize &&
-            column in 0 until boardSize
+    fun isPositionInsideBoard(position: Position): Boolean {
+        return position.row in 0 until boardSize &&
+            position.column in 0 until boardSize
     }
 
     companion object {
