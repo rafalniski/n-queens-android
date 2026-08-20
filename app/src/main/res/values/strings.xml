@@ -1,4 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">N-Queens</string>
+    <string name="game_title">N-Queens</string>
+    <string name="game_toggle_queen_action">Place or remove queen</string>
+    <string name="game_empty_cell_description">File %1$s, rank %2$d, empty</string>
+    <string name="game_queen_cell_description">File %1$s, rank %2$d, queen</string>
+    <string name="game_conflicting_queen_cell_description">File %1$s, rank %2$d, conflicting queen</string>
+
+    <plurals name="game_queens_left">
+        <item quantity="one">%1$d queen left</item>
+        <item quantity="other">%1$d queens left</item>
+    </plurals>
+
+    <plurals name="game_conflicting_queens">
+        <item quantity="one">%1$d conflicting queen</item>
+        <item quantity="other">%1$d conflicting queens</item>
+    </plurals>
 </resources>
