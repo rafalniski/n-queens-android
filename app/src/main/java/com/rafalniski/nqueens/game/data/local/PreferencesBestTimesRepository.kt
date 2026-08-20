@@ -1,4 +1,4 @@
-package com.rafalniski.nqueens.game.data
+package com.rafalniski.nqueens.game.data.local
 
 import android.content.Context
 import androidx.datastore.core.DataStore

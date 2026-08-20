@@ -1,4 +1,4 @@
-package com.rafalniski.nqueens.game.presentation.compose
+package com.rafalniski.nqueens.game.presentation.ui
 
 import android.content.res.Configuration
 import androidx.compose.animation.core.animateFloatAsState
@@ -31,6 +31,11 @@ import com.rafalniski.nqueens.game.presentation.GameAction
 import com.rafalniski.nqueens.game.presentation.GameStatus
 import com.rafalniski.nqueens.game.presentation.GameUiState
 import com.rafalniski.nqueens.game.presentation.formatElapsedTime
+import com.rafalniski.nqueens.game.presentation.ui.components.BestTimesDialog
+import com.rafalniski.nqueens.game.presentation.ui.components.BoardSizeSelector
+import com.rafalniski.nqueens.game.presentation.ui.components.ChessBoard
+import com.rafalniski.nqueens.game.presentation.ui.components.GameActionControl
+import com.rafalniski.nqueens.game.presentation.ui.components.GameWonDialog
 import com.rafalniski.nqueens.ui.theme.AppDimensions
 import com.rafalniski.nqueens.ui.theme.NQueensTheme
 

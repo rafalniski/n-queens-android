@@ -1,4 +1,4 @@
-package com.rafalniski.nqueens.game.data
+package com.rafalniski.nqueens.game.testing
 
 import com.rafalniski.nqueens.game.domain.BestTimesRepository
 import com.rafalniski.nqueens.game.domain.addBestTime

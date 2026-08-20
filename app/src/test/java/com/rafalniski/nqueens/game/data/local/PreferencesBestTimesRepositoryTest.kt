@@ -1,4 +1,4 @@
-package com.rafalniski.nqueens.game.data
+package com.rafalniski.nqueens.game.data.local
 
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import java.io.File

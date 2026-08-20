@@ -1,4 +1,4 @@
-package com.rafalniski.nqueens.game
+package com.rafalniski.nqueens.game.testing
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

@@ -1,4 +1,4 @@
-package com.rafalniski.nqueens.game.presentation.compose
+package com.rafalniski.nqueens.game.presentation.ui.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row

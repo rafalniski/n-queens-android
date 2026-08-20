@@ -1,9 +1,9 @@
 package com.rafalniski.nqueens.game.presentation
 
-import com.rafalniski.nqueens.game.MainDispatcherRule
-import com.rafalniski.nqueens.game.data.FakeBestTimesRepository
 import com.rafalniski.nqueens.game.domain.Position
-import com.rafalniski.nqueens.game.timer.GameTimer
+import com.rafalniski.nqueens.game.presentation.timer.GameTimer
+import com.rafalniski.nqueens.game.testing.FakeBestTimesRepository
+import com.rafalniski.nqueens.game.testing.MainDispatcherRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Rule
 import kotlin.test.Test

@@ -4,7 +4,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-class BestTimesTest {
+class BestTimesRankingTest {
     @Test
     fun `new time is inserted in ascending order`() {
         val result = addBestTime(

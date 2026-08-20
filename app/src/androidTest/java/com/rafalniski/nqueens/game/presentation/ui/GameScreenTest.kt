@@ -1,4 +1,4 @@
-package com.rafalniski.nqueens.game.presentation.compose
+package com.rafalniski.nqueens.game.presentation.ui
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
@@ -11,6 +11,7 @@ import com.rafalniski.nqueens.game.domain.Position
 import com.rafalniski.nqueens.game.presentation.GameAction
 import com.rafalniski.nqueens.game.presentation.GameStatus
 import com.rafalniski.nqueens.game.presentation.GameUiState
+import com.rafalniski.nqueens.game.presentation.ui.components.BestTimesDialog
 import com.rafalniski.nqueens.ui.theme.NQueensTheme
 import org.junit.Assert.assertEquals
 import org.junit.Rule

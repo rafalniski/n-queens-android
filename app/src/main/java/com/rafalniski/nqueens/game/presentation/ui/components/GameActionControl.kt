@@ -1,4 +1,4 @@
-package com.rafalniski.nqueens.game.presentation.compose
+package com.rafalniski.nqueens.game.presentation.ui.components
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier

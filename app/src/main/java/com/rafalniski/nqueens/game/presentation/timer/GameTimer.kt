@@ -1,4 +1,4 @@
-package com.rafalniski.nqueens.game.timer
+package com.rafalniski.nqueens.game.presentation.timer
 
 import android.os.SystemClock
 
