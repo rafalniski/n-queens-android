@@ -1,4 +1,4 @@
-package com.rafalniski.nqueens.ui.theme
+package com.rafalniski.nqueens.game.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

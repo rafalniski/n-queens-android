@@ -34,8 +34,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import com.rafalniski.nqueens.R
 import com.rafalniski.nqueens.game.domain.Position
-import com.rafalniski.nqueens.ui.theme.AppDimensions
-import com.rafalniski.nqueens.ui.theme.ChessBoardColors
+import com.rafalniski.nqueens.game.presentation.ui.theme.AppDimensions
+import com.rafalniski.nqueens.game.presentation.ui.theme.ChessBoardColors
 
 @Composable
 fun ChessBoardCell(

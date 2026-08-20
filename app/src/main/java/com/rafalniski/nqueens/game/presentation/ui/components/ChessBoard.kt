@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import com.rafalniski.nqueens.game.domain.Position
-import com.rafalniski.nqueens.ui.theme.AppDimensions
+import com.rafalniski.nqueens.game.presentation.ui.theme.AppDimensions
 
 @Composable
 fun ChessBoard(

@@ -1,10 +1,9 @@
-package com.rafalniski.nqueens
+package com.rafalniski.nqueens.app
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.rafalniski.nqueens.app.NQueensApp
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

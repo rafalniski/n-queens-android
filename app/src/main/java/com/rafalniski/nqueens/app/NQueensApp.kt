@@ -8,7 +8,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.rafalniski.nqueens.game.presentation.GameViewModel
 import com.rafalniski.nqueens.game.presentation.ui.GameRoute
-import com.rafalniski.nqueens.ui.theme.NQueensTheme
+import com.rafalniski.nqueens.game.presentation.ui.theme.NQueensTheme
 
 @Composable
 fun NQueensApp(modifier: Modifier = Modifier) {

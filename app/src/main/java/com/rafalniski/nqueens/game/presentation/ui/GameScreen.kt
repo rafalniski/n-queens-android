@@ -36,8 +36,8 @@ import com.rafalniski.nqueens.game.presentation.ui.components.BoardSizeSelector
 import com.rafalniski.nqueens.game.presentation.ui.components.ChessBoard
 import com.rafalniski.nqueens.game.presentation.ui.components.GameActionControl
 import com.rafalniski.nqueens.game.presentation.ui.components.GameWonDialog
-import com.rafalniski.nqueens.ui.theme.AppDimensions
-import com.rafalniski.nqueens.ui.theme.NQueensTheme
+import com.rafalniski.nqueens.game.presentation.ui.theme.AppDimensions
+import com.rafalniski.nqueens.game.presentation.ui.theme.NQueensTheme
 
 @Composable
 fun GameScreen(

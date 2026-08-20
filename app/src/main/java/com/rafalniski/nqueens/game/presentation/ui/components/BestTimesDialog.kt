@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.rafalniski.nqueens.R
 import com.rafalniski.nqueens.game.presentation.formatElapsedTime
-import com.rafalniski.nqueens.ui.theme.AppDimensions
+import com.rafalniski.nqueens.game.presentation.ui.theme.AppDimensions
 
 @Composable
 fun BestTimesDialog(

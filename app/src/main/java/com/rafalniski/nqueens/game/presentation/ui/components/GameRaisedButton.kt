@@ -21,7 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.rafalniski.nqueens.ui.theme.AppDimensions
+import com.rafalniski.nqueens.game.presentation.ui.theme.AppDimensions
 
 @Composable
 fun GameRaisedButton(

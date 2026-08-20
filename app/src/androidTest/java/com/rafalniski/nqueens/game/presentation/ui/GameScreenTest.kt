@@ -12,7 +12,7 @@ import com.rafalniski.nqueens.game.presentation.GameAction
 import com.rafalniski.nqueens.game.presentation.GameStatus
 import com.rafalniski.nqueens.game.presentation.GameUiState
 import com.rafalniski.nqueens.game.presentation.ui.components.BestTimesDialog
-import com.rafalniski.nqueens.ui.theme.NQueensTheme
+import com.rafalniski.nqueens.game.presentation.ui.theme.NQueensTheme
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
