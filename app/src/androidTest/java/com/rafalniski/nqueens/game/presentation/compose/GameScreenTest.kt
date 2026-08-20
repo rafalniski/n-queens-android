@@ -33,6 +33,10 @@ class GameScreenTest {
             .assertIsDisplayed()
 
         composeTestRule
+            .onNodeWithText("Time: 00:00")
+            .assertIsDisplayed()
+
+        composeTestRule
             .onNodeWithText("Reset")
             .assertIsNotEnabled()
     }

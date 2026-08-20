@@ -1,15 +1,23 @@
 package com.rafalniski.nqueens.game.presentation
 
+import com.rafalniski.nqueens.game.MainDispatcherRule
 import com.rafalniski.nqueens.game.domain.Position
+import com.rafalniski.nqueens.game.timer.GameTimer
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class GameViewModelTest {
+    @get:Rule
+    val mainDispatcherRule = MainDispatcherRule()
+
     @Test
     fun `initial state contains an empty eight by eight board`() {
-        val viewModel = GameViewModel()
+        val viewModel = createViewModel()
 
         val state = viewModel.uiState.value
 
@@ -21,8 +29,86 @@ class GameViewModelTest {
     }
 
     @Test
+    fun `first move starts elapsed time updates`() {
+        val viewModel = createViewModel(initialBoardSize = 4)
+
+        viewModel.onAction(
+            GameAction.CellTapped(
+                Position(row = 0, column = 0),
+            ),
+        )
+
+        mainDispatcherRule.scheduler.advanceTimeBy(1_000L)
+        mainDispatcherRule.scheduler.runCurrent()
+
+        assertEquals(
+            1_000L,
+            viewModel.uiState.value.elapsedTimeMillis,
+        )
+    }
+
+    @Test
+    fun `reset clears elapsed time`() {
+        val viewModel = createViewModel(initialBoardSize = 4)
+
+        viewModel.onAction(
+            GameAction.CellTapped(
+                Position(row = 0, column = 0),
+            ),
+        )
+
+        mainDispatcherRule.scheduler.advanceTimeBy(2_000L)
+        mainDispatcherRule.scheduler.runCurrent()
+
+        viewModel.onAction(GameAction.ResetClicked)
+
+        assertEquals(
+            0L,
+            viewModel.uiState.value.elapsedTimeMillis,
+        )
+    }
+
+    @Test
+    fun `solving game stops elapsed time`() {
+        val viewModel = createViewModel(initialBoardSize = 4)
+
+        viewModel.onAction(
+            GameAction.CellTapped(
+                Position(row = 0, column = 1),
+            ),
+        )
+
+        mainDispatcherRule.scheduler.advanceTimeBy(2_500L)
+        mainDispatcherRule.scheduler.runCurrent()
+
+        viewModel.onAction(
+            GameAction.CellTapped(Position(row = 1, column = 3)),
+        )
+        viewModel.onAction(
+            GameAction.CellTapped(Position(row = 2, column = 0)),
+        )
+        viewModel.onAction(
+            GameAction.CellTapped(Position(row = 3, column = 2)),
+        )
+
+        assertTrue(viewModel.uiState.value.isSolved)
+        assertEquals(
+            2_500L,
+            viewModel.uiState.value.elapsedTimeMillis,
+        )
+
+        mainDispatcherRule.scheduler.advanceTimeBy(5_000L)
+        mainDispatcherRule.scheduler.runCurrent()
+
+        assertEquals(
+            2_500L,
+            viewModel.uiState.value.elapsedTimeMillis,
+        )
+    }
+
+    @Test
     fun `cell tap places a queen`() {
-        val viewModel = GameViewModel(initialBoardSize = 4)
+        val viewModel = createViewModel(initialBoardSize = 4)
         val position = Position(row = 1, column = 2)
 
         viewModel.onAction(
@@ -37,7 +123,7 @@ class GameViewModelTest {
 
     @Test
     fun `second tap on occupied cell removes queen`() {
-        val viewModel = GameViewModel(initialBoardSize = 4)
+        val viewModel = createViewModel(initialBoardSize = 4)
         val position = Position(row = 1, column = 2)
 
         viewModel.onAction(GameAction.CellTapped(position))
@@ -48,7 +134,7 @@ class GameViewModelTest {
 
     @Test
     fun `conflicts are available in UI state`() {
-        val viewModel = GameViewModel(initialBoardSize = 4)
+        val viewModel = createViewModel(initialBoardSize = 4)
         val first = Position(row = 0, column = 0)
         val second = Position(row = 0, column = 3)
 
@@ -63,7 +149,7 @@ class GameViewModelTest {
 
     @Test
     fun `selecting board size starts empty game with selected size`() {
-        val viewModel = GameViewModel(initialBoardSize = 4)
+        val viewModel = createViewModel(initialBoardSize = 4)
         viewModel.onAction(
             GameAction.CellTapped(
                 Position(row = 0, column = 0),
@@ -82,7 +168,7 @@ class GameViewModelTest {
 
     @Test
     fun `reset clears board and keeps selected size`() {
-        val viewModel = GameViewModel(initialBoardSize = 6)
+        val viewModel = createViewModel(initialBoardSize = 6)
         viewModel.onAction(
             GameAction.CellTapped(
                 Position(row = 0, column = 0),
@@ -98,7 +184,7 @@ class GameViewModelTest {
 
     @Test
     fun `play again clears solved board and keeps selected size`() {
-        val viewModel = GameViewModel(initialBoardSize = 4)
+        val viewModel = createViewModel(initialBoardSize = 4)
         placeFourByFourSolution(viewModel)
         assertTrue(viewModel.uiState.value.isSolved)
 
@@ -112,7 +198,7 @@ class GameViewModelTest {
 
     @Test
     fun `placing complete solution marks game as solved`() {
-        val viewModel = GameViewModel(initialBoardSize = 4)
+        val viewModel = createViewModel(initialBoardSize = 4)
 
         placeFourByFourSolution(viewModel)
 
@@ -134,5 +220,18 @@ class GameViewModelTest {
                 GameAction.CellTapped(position),
             )
         }
+    }
+
+    private fun createViewModel(
+        initialBoardSize: Int = GameViewModel.DEFAULT_BOARD_SIZE,
+    ): GameViewModel {
+        return GameViewModel(
+            initialBoardSize = initialBoardSize,
+            gameTimer = GameTimer(
+                currentTimeMillis = {
+                    mainDispatcherRule.scheduler.currentTime
+                },
+            ),
+        )
     }
 }

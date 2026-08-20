@@ -9,8 +9,9 @@
     <string name="game_board_size">Board %1$d × %2$d</string>
     <string name="game_reset">Reset</string>
     <string name="game_won_title">Puzzle solved!</string>
-    <string name="game_won_message">Great job! None of the queens threaten each other.</string>
+    <string name="game_won_message">Great job! Your time was %1$s.</string>
     <string name="game_play_again">Play again</string>
+    <string name="game_elapsed_time">Time: %1$s</string>
 
     <plurals name="game_queens_left">
         <item quantity="one">%1$d queen left</item>

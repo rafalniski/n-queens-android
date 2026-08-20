@@ -24,6 +24,7 @@ import com.rafalniski.nqueens.game.domain.GameState
 import com.rafalniski.nqueens.game.domain.Position
 import com.rafalniski.nqueens.game.presentation.GameAction
 import com.rafalniski.nqueens.game.presentation.GameUiState
+import com.rafalniski.nqueens.game.presentation.formatElapsedTime
 import com.rafalniski.nqueens.ui.theme.AppDimensions
 import com.rafalniski.nqueens.ui.theme.NQueensTheme
 
@@ -71,14 +72,28 @@ fun GameScreen(
                 }
             }
 
-            Text(
-                text = pluralStringResource(
-                    R.plurals.game_queens_left,
-                    state.queensLeft,
-                    state.queensLeft,
-                ),
-                style = MaterialTheme.typography.titleMedium,
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = pluralStringResource(
+                        R.plurals.game_queens_left,
+                        state.queensLeft,
+                        state.queensLeft,
+                    ),
+                    style = MaterialTheme.typography.titleMedium,
+                )
+
+                Text(
+                    text = stringResource(
+                        R.string.game_elapsed_time,
+                        formatElapsedTime(state.elapsedTimeMillis),
+                    ),
+                    style = MaterialTheme.typography.titleMedium,
+                )
+            }
 
             Text(
                 text = if (state.conflictingQueens.isEmpty()) {
@@ -118,6 +133,7 @@ fun GameScreen(
 
     if (state.isSolved) {
         GameWonDialog(
+            elapsedTimeMillis = state.elapsedTimeMillis,
             onPlayAgainClick = {
                 onAction(GameAction.PlayAgainClicked)
             },

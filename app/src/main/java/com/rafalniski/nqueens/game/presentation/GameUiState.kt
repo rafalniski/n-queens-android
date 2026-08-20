@@ -6,6 +6,7 @@ import com.rafalniski.nqueens.game.domain.Position
 
 data class GameUiState(
     val game: GameState,
+    val elapsedTimeMillis: Long = 0L,
 ) {
     val boardSize: Int
         get() = game.boardSize
