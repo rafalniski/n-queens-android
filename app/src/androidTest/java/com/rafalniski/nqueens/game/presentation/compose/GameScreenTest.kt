@@ -2,7 +2,6 @@ package com.rafalniski.nqueens.game.presentation.compose
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
-import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -10,6 +9,7 @@ import androidx.compose.ui.test.performClick
 import com.rafalniski.nqueens.game.domain.GameState
 import com.rafalniski.nqueens.game.domain.Position
 import com.rafalniski.nqueens.game.presentation.GameAction
+import com.rafalniski.nqueens.game.presentation.GameStatus
 import com.rafalniski.nqueens.game.presentation.GameUiState
 import com.rafalniski.nqueens.ui.theme.NQueensTheme
 import org.junit.Assert.assertEquals
@@ -21,7 +21,7 @@ class GameScreenTest {
     val composeTestRule = createComposeRule()
 
     @Test
-    fun emptyGameShowsQueensLeftAndDisabledReset() {
+    fun readyGameShowsQueensLeftAndStartButton() {
         setGameContent(
             state = GameUiState(
                 game = GameState(boardSize = 4),
@@ -37,8 +37,8 @@ class GameScreenTest {
             .assertIsDisplayed()
 
         composeTestRule
-            .onNodeWithText("Reset")
-            .assertIsNotEnabled()
+            .onNodeWithText("Start game")
+            .assertIsEnabled()
     }
 
     @Test
@@ -48,6 +48,7 @@ class GameScreenTest {
         setGameContent(
             state = GameUiState(
                 game = GameState(boardSize = 4),
+                status = GameStatus.Playing,
             ),
             onAction = { action ->
                 receivedAction = action
@@ -67,6 +68,29 @@ class GameScreenTest {
     }
 
     @Test
+    fun startButtonEmitsStartGameAction() {
+        var receivedAction: GameAction? = null
+
+        setGameContent(
+            state = GameUiState(
+                game = GameState(boardSize = 4),
+            ),
+            onAction = { action ->
+                receivedAction = action
+            },
+        )
+
+        composeTestRule
+            .onNodeWithText("Start game")
+            .performClick()
+
+        assertEquals(
+            GameAction.StartGameClicked,
+            receivedAction,
+        )
+    }
+
+    @Test
     fun conflictingQueensShowConflictMessage() {
         setGameContent(
             state = GameUiState(
@@ -77,6 +101,7 @@ class GameScreenTest {
                         Position(row = 0, column = 3),
                     ),
                 ),
+                status = GameStatus.Playing,
             ),
         )
 
@@ -124,6 +149,7 @@ class GameScreenTest {
                         Position(row = 0, column = 0),
                     ),
                 ),
+                status = GameStatus.Playing,
             ),
             onAction = { action ->
                 receivedAction = action
@@ -131,7 +157,7 @@ class GameScreenTest {
         )
 
         composeTestRule
-            .onNodeWithText("Reset")
+            .onNodeWithText("Reset game")
             .assertIsEnabled()
             .performClick()
 

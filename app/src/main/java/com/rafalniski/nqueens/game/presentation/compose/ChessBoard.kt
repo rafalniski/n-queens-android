@@ -15,6 +15,7 @@ fun ChessBoard(
     boardSize: Int,
     queens: Set<Position>,
     conflictingQueens: Set<Position>,
+    enabled: Boolean,
     onCellClick: (Position) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -37,12 +38,14 @@ fun ChessBoard(
 
                     ChessBoardCell(
                         position = position,
+                        queenPlacementKey = queens.hashCode(),
                         rank = rank,
                         file = file,
                         showRank = column == 0,
                         showFile = row == boardSize - 1,
                         hasQueen = position in queens,
                         isConflicting = position in conflictingQueens,
+                        enabled = enabled,
                         onClick = {
                             onCellClick(position)
                         },

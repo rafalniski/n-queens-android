@@ -20,6 +20,7 @@ import com.rafalniski.nqueens.R
 @Composable
 fun BoardSizeSelector(
     selectedBoardSize: Int,
+    enabled: Boolean,
     onBoardSizeSelected: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -27,6 +28,7 @@ fun BoardSizeSelector(
     Box(modifier = modifier) {
         OutlinedButton(
             onClick = { isExpanded = true },
+            enabled = enabled,
         ) {
             Text(
                 text = stringResource(

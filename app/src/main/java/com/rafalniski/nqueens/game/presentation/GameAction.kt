@@ -11,6 +11,8 @@ sealed interface GameAction {
         val boardSize: Int,
     ) : GameAction
 
+    data object StartGameClicked : GameAction
+
     data object ResetClicked : GameAction
 
     data object PlayAgainClicked : GameAction

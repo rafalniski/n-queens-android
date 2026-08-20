@@ -6,6 +6,11 @@ import com.rafalniski.nqueens.game.domain.Position
 
 data class GameUiState(
     val game: GameState,
+    val status: GameStatus = if (NQueensEngine.isSolved(game)) {
+        GameStatus.Won
+    } else {
+        GameStatus.Ready
+    },
     val elapsedTimeMillis: Long = 0L,
     val bestTimes: List<Long> = emptyList(),
     val isBestTimesVisible: Boolean = false,
@@ -23,5 +28,5 @@ data class GameUiState(
         get() = game.boardSize - game.queens.size
 
     val isSolved: Boolean
-        get() = NQueensEngine.isSolved(game)
+        get() = status == GameStatus.Won
 }

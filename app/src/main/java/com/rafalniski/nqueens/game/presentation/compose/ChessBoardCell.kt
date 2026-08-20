@@ -1,5 +1,13 @@
 package com.rafalniski.nqueens.game.presentation.compose
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.keyframes
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -10,8 +18,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -27,16 +40,41 @@ import com.rafalniski.nqueens.ui.theme.ChessBoardColors
 @Composable
 fun ChessBoardCell(
     position: Position,
+    queenPlacementKey: Int,
     rank: Int,
     file: String,
     showRank: Boolean,
     showFile: Boolean,
     hasQueen: Boolean,
     isConflicting: Boolean,
+    enabled: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val isLightSquare = (position.row + position.column) % 2 == 0
+    val shakeOffset = remember { Animatable(0f) }
+    val shakeDistance = with(LocalDensity.current) {
+        AppDimensions.conflictShakeDistance.toPx()
+    }
+
+    LaunchedEffect(isConflicting, queenPlacementKey) {
+        if (isConflicting) {
+            shakeOffset.animateTo(
+                targetValue = 0f,
+                animationSpec = keyframes {
+                    durationMillis = ConflictShakeDurationMillis
+                    -shakeDistance at 40
+                    shakeDistance at 80
+                    -shakeDistance at 120
+                    shakeDistance at 160
+                    -shakeDistance / 2 at 200
+                    shakeDistance / 2 at 240
+                },
+            )
+        } else {
+            shakeOffset.snapTo(0f)
+        }
+    }
 
     val squareColor = if (isLightSquare) {
         ChessBoardColors.lightSquare
@@ -86,9 +124,11 @@ fun ChessBoardCell(
 
     Box(
         modifier = modifier
+            .clipToBounds()
             .background(backgroundColor)
             .then(conflictBorderModifier)
             .clickable(
+                enabled = enabled,
                 role = Role.Button,
                 onClickLabel = toggleActionLabel,
                 onClick = onClick,
@@ -124,12 +164,29 @@ fun ChessBoardCell(
             )
         }
 
-        if (hasQueen) {
+        AnimatedVisibility(
+            visible = hasQueen,
+            enter = fadeIn(
+                animationSpec = tween(QueenEnterDurationMillis),
+            ) + scaleIn(
+                initialScale = QueenHiddenScale,
+                animationSpec = tween(QueenEnterDurationMillis),
+            ),
+            exit = fadeOut(
+                animationSpec = tween(QueenExitDurationMillis),
+            ) + scaleOut(
+                targetScale = QueenHiddenScale,
+                animationSpec = tween(QueenExitDurationMillis),
+            ),
+        ) {
             Image(
                 painter = painterResource(R.drawable.ic_queen_black),
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxSize(QueenSizeFraction)
+                    .graphicsLayer {
+                        translationX = shakeOffset.value
+                    }
                     .clearAndSetSemantics {},
             )
         }
@@ -137,3 +194,7 @@ fun ChessBoardCell(
 }
 
 private const val QueenSizeFraction = 0.78f
+private const val QueenHiddenScale = 0.55f
+private const val QueenEnterDurationMillis = 180
+private const val QueenExitDurationMillis = 120
+private const val ConflictShakeDurationMillis = 280

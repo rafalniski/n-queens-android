@@ -44,7 +44,13 @@ class GameViewModel(
             }
 
             is GameAction.BoardSizeSelected -> {
-                startNewGame(action.boardSize)
+                if (_uiState.value.status == GameStatus.Ready) {
+                    startNewGame(action.boardSize)
+                }
+            }
+
+            GameAction.StartGameClicked -> {
+                startGame()
             }
 
             GameAction.ResetClicked,
@@ -64,28 +70,46 @@ class GameViewModel(
     }
 
     private fun handleCellTapped(position: Position) {
+        if (_uiState.value.status != GameStatus.Playing) {
+            return
+        }
+
         val currentGame = _uiState.value.game
         val updatedGame = NQueensEngine.toggleQueen(
             state = currentGame,
             position = position,
         )
+        val isSolved = NQueensEngine.isSolved(updatedGame)
 
-        updateGame(updatedGame)
-
-        val isFirstMove = currentGame.queens.isEmpty() &&
-            updatedGame.queens.isNotEmpty()
-
-        if (isFirstMove && !gameTimer.isRunning) {
-            startTimer()
+        _uiState.update { state ->
+            state.copy(
+                game = updatedGame,
+                status = if (isSolved) {
+                    GameStatus.Won
+                } else {
+                    GameStatus.Playing
+                },
+            )
         }
 
-        if (NQueensEngine.isSolved(updatedGame)) {
+        if (isSolved) {
             val elapsedTimeMillis = stopTimer()
             saveCompletedTime(
                 boardSize = updatedGame.boardSize,
                 elapsedTimeMillis = elapsedTimeMillis,
             )
         }
+    }
+
+    private fun startGame() {
+        if (_uiState.value.status != GameStatus.Ready) {
+            return
+        }
+
+        _uiState.update { state ->
+            state.copy(status = GameStatus.Playing)
+        }
+        startTimer()
     }
 
     private fun startTimer() {
@@ -131,12 +155,6 @@ class GameViewModel(
             game = GameState(boardSize = boardSize),
         )
         observeBestTimes(boardSize)
-    }
-
-    private fun updateGame(game: GameState) {
-        _uiState.update { state ->
-            state.copy(game = game)
-        }
     }
 
     private fun observeBestTimes(boardSize: Int) {

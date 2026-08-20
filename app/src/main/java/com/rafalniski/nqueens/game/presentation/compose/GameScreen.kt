@@ -1,7 +1,9 @@
 package com.rafalniski.nqueens.game.presentation.compose
 
 import android.content.res.Configuration
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,15 +16,19 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.rafalniski.nqueens.R
 import com.rafalniski.nqueens.game.domain.GameState
 import com.rafalniski.nqueens.game.domain.Position
 import com.rafalniski.nqueens.game.presentation.GameAction
+import com.rafalniski.nqueens.game.presentation.GameStatus
 import com.rafalniski.nqueens.game.presentation.GameUiState
 import com.rafalniski.nqueens.game.presentation.formatElapsedTime
 import com.rafalniski.nqueens.ui.theme.AppDimensions
@@ -34,6 +40,15 @@ fun GameScreen(
     onAction: (GameAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val boardAlpha by animateFloatAsState(
+        targetValue = if (state.status == GameStatus.Ready) {
+            ReadyBoardAlpha
+        } else {
+            1f
+        },
+        label = "boardAlpha",
+    )
+
     Scaffold(modifier = modifier) { innerPadding ->
         Column(
             modifier = Modifier
@@ -57,30 +72,18 @@ fun GameScreen(
             ) {
                 BoardSizeSelector(
                     selectedBoardSize = state.boardSize,
+                    enabled = state.status == GameStatus.Ready,
                     onBoardSizeSelected = { boardSize ->
                         onAction(GameAction.BoardSizeSelected(boardSize))
                     },
                 )
 
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
+                TextButton(
+                    onClick = {
+                        onAction(GameAction.BestTimesClicked)
+                    },
                 ) {
-                    TextButton(
-                        onClick = {
-                            onAction(GameAction.BestTimesClicked)
-                        },
-                    ) {
-                        Text(text = stringResource(R.string.game_best_times))
-                    }
-
-                    TextButton(
-                        onClick = {
-                            onAction(GameAction.ResetClicked)
-                        },
-                        enabled = state.queens.isNotEmpty(),
-                    ) {
-                        Text(text = stringResource(R.string.game_reset))
-                    }
+                    Text(text = stringResource(R.string.game_best_times))
                 }
             }
 
@@ -126,19 +129,52 @@ fun GameScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
-                contentAlignment = Alignment.Center,
             ) {
-                val boardDimension = minOf(maxWidth, maxHeight)
-
-                ChessBoard(
-                    boardSize = state.boardSize,
-                    queens = state.queens,
-                    conflictingQueens = state.conflictingQueens,
-                    onCellClick = { position ->
-                        onAction(GameAction.CellTapped(position))
-                    },
-                    modifier = Modifier.size(boardDimension),
+                val availableBoardHeight =
+                    (maxHeight - AppDimensions.gameActionAreaMinHeight)
+                        .coerceAtLeast(0.dp)
+                val boardDimension = minOf(
+                    maxWidth,
+                    availableBoardHeight,
                 )
+
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    ChessBoard(
+                        boardSize = state.boardSize,
+                        queens = state.queens,
+                        conflictingQueens = state.conflictingQueens,
+                        enabled = state.status == GameStatus.Playing,
+                        onCellClick = { position ->
+                            onAction(GameAction.CellTapped(position))
+                        },
+                        modifier = Modifier
+                            .size(boardDimension)
+                            .graphicsLayer {
+                                alpha = boardAlpha
+                            },
+                    )
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        GameActionControl(
+                            status = state.status,
+                            onStartClick = {
+                                onAction(GameAction.StartGameClicked)
+                            },
+                            onResetClick = {
+                                onAction(GameAction.ResetClicked)
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                    }
+                }
             }
         }
     }
@@ -163,6 +199,8 @@ fun GameScreen(
     }
 }
 
+private const val ReadyBoardAlpha = 0.72f
+
 @Preview(
     name = "Playing - light",
     showBackground = true,
@@ -185,6 +223,7 @@ private fun GameScreenPreview() {
                         Position(row = 2, column = 1),
                     ),
                 ),
+                status = GameStatus.Playing,
             ),
             onAction = {},
         )

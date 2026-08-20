@@ -8,4 +8,9 @@ object AppDimensions {
     val conflictBorderWidth = 3.dp
     val boardCornerRadius = 4.dp
     val coordinatePadding = 2.dp
+    val conflictShakeDistance = 5.dp
+    val gameButtonHeight = 56.dp
+    val gameButtonDepth = 7.dp
+    val gameButtonCornerRadius = 12.dp
+    val gameActionAreaMinHeight = 112.dp
 }
