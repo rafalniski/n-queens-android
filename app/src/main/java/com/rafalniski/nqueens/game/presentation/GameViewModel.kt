@@ -2,6 +2,7 @@ package com.rafalniski.nqueens.game.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.rafalniski.nqueens.game.domain.BestTimesRepository
 import com.rafalniski.nqueens.game.domain.GameState
 import com.rafalniski.nqueens.game.domain.NQueensEngine
 import com.rafalniski.nqueens.game.domain.Position
@@ -12,10 +13,12 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class GameViewModel(
+    private val bestTimesRepository: BestTimesRepository,
     initialBoardSize: Int = DEFAULT_BOARD_SIZE,
     private val gameTimer: GameTimer = GameTimer(),
     private val timerUpdateIntervalMillis: Long = TIMER_UPDATE_INTERVAL_MILLIS,
@@ -28,6 +31,11 @@ class GameViewModel(
     val uiState: StateFlow<GameUiState> = _uiState.asStateFlow()
 
     private var timerJob: Job? = null
+    private var bestTimesJob: Job? = null
+
+    init {
+        observeBestTimes(initialBoardSize)
+    }
 
     fun onAction(action: GameAction) {
         when (action) {
@@ -43,6 +51,14 @@ class GameViewModel(
             GameAction.PlayAgainClicked,
             -> {
                 startNewGame(_uiState.value.boardSize)
+            }
+
+            GameAction.BestTimesClicked -> {
+                setBestTimesVisibility(isVisible = true)
+            }
+
+            GameAction.BestTimesDismissed -> {
+                setBestTimesVisibility(isVisible = false)
             }
         }
     }
@@ -64,7 +80,11 @@ class GameViewModel(
         }
 
         if (NQueensEngine.isSolved(updatedGame)) {
-            stopTimer()
+            val elapsedTimeMillis = stopTimer()
+            saveCompletedTime(
+                boardSize = updatedGame.boardSize,
+                elapsedTimeMillis = elapsedTimeMillis,
+            )
         }
     }
 
@@ -79,7 +99,7 @@ class GameViewModel(
         }
     }
 
-    private fun stopTimer() {
+    private fun stopTimer(): Long {
         timerJob?.cancel()
         timerJob = null
 
@@ -90,6 +110,8 @@ class GameViewModel(
                 elapsedTimeMillis = elapsedTimeMillis,
             )
         }
+
+        return elapsedTimeMillis
     }
 
     private fun updateElapsedTime() {
@@ -108,11 +130,46 @@ class GameViewModel(
         _uiState.value = GameUiState(
             game = GameState(boardSize = boardSize),
         )
+        observeBestTimes(boardSize)
     }
 
     private fun updateGame(game: GameState) {
         _uiState.update { state ->
             state.copy(game = game)
+        }
+    }
+
+    private fun observeBestTimes(boardSize: Int) {
+        bestTimesJob?.cancel()
+        bestTimesJob = viewModelScope.launch {
+            bestTimesRepository.observeBestTimes(boardSize)
+                .collectLatest { bestTimes ->
+                    _uiState.update { state ->
+                        if (state.boardSize == boardSize) {
+                            state.copy(bestTimes = bestTimes)
+                        } else {
+                            state
+                        }
+                    }
+                }
+        }
+    }
+
+    private fun saveCompletedTime(
+        boardSize: Int,
+        elapsedTimeMillis: Long,
+    ) {
+        viewModelScope.launch {
+            bestTimesRepository.saveCompletedTime(
+                boardSize = boardSize,
+                elapsedTimeMillis = elapsedTimeMillis,
+            )
+        }
+    }
+
+    private fun setBestTimesVisibility(isVisible: Boolean) {
+        _uiState.update { state ->
+            state.copy(isBestTimesVisible = isVisible)
         }
     }
 

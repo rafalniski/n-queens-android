@@ -14,4 +14,8 @@ sealed interface GameAction {
     data object ResetClicked : GameAction
 
     data object PlayAgainClicked : GameAction
+
+    data object BestTimesClicked : GameAction
+
+    data object BestTimesDismissed : GameAction
 }

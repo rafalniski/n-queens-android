@@ -1,6 +1,7 @@
 package com.rafalniski.nqueens.game.presentation
 
 import com.rafalniski.nqueens.game.MainDispatcherRule
+import com.rafalniski.nqueens.game.data.FakeBestTimesRepository
 import com.rafalniski.nqueens.game.domain.Position
 import com.rafalniski.nqueens.game.timer.GameTimer
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -205,6 +206,70 @@ class GameViewModelTest {
         assertTrue(viewModel.uiState.value.isSolved)
     }
 
+    @Test
+    fun `stored best times are exposed for selected board size`() {
+        val repository = FakeBestTimesRepository().apply {
+            setBestTimes(
+                boardSize = 4,
+                bestTimes = listOf(1_000L, 2_000L),
+            )
+        }
+        val viewModel = createViewModel(
+            initialBoardSize = 4,
+            bestTimesRepository = repository,
+        )
+
+        mainDispatcherRule.scheduler.runCurrent()
+
+        assertEquals(
+            listOf(1_000L, 2_000L),
+            viewModel.uiState.value.bestTimes,
+        )
+    }
+
+    @Test
+    fun `completed game is added to best times`() {
+        val repository = FakeBestTimesRepository()
+        val viewModel = createViewModel(
+            initialBoardSize = 4,
+            bestTimesRepository = repository,
+        )
+        viewModel.onAction(
+            GameAction.CellTapped(Position(row = 0, column = 1)),
+        )
+        mainDispatcherRule.scheduler.advanceTimeBy(2_500L)
+        mainDispatcherRule.scheduler.runCurrent()
+
+        viewModel.onAction(
+            GameAction.CellTapped(Position(row = 1, column = 3)),
+        )
+        viewModel.onAction(
+            GameAction.CellTapped(Position(row = 2, column = 0)),
+        )
+        viewModel.onAction(
+            GameAction.CellTapped(Position(row = 3, column = 2)),
+        )
+        mainDispatcherRule.scheduler.runCurrent()
+
+        assertEquals(
+            listOf(2_500L),
+            viewModel.uiState.value.bestTimes,
+        )
+    }
+
+    @Test
+    fun `best times actions control dialog visibility`() {
+        val viewModel = createViewModel()
+
+        viewModel.onAction(GameAction.BestTimesClicked)
+
+        assertTrue(viewModel.uiState.value.isBestTimesVisible)
+
+        viewModel.onAction(GameAction.BestTimesDismissed)
+
+        assertFalse(viewModel.uiState.value.isBestTimesVisible)
+    }
+
     private fun placeFourByFourSolution(
         viewModel: GameViewModel,
     ) {
@@ -224,8 +289,10 @@ class GameViewModelTest {
 
     private fun createViewModel(
         initialBoardSize: Int = GameViewModel.DEFAULT_BOARD_SIZE,
+        bestTimesRepository: FakeBestTimesRepository = FakeBestTimesRepository(),
     ): GameViewModel {
         return GameViewModel(
+            bestTimesRepository = bestTimesRepository,
             initialBoardSize = initialBoardSize,
             gameTimer = GameTimer(
                 currentTimeMillis = {

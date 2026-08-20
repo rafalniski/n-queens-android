@@ -168,6 +168,63 @@ class GameScreenTest {
         )
     }
 
+    @Test
+    fun bestTimesClickEmitsBestTimesAction() {
+        var receivedAction: GameAction? = null
+
+        setGameContent(
+            state = GameUiState(
+                game = GameState(boardSize = 4),
+            ),
+            onAction = { action ->
+                receivedAction = action
+            },
+        )
+
+        composeTestRule
+            .onNodeWithText("Best times")
+            .assertIsDisplayed()
+            .performClick()
+
+        assertEquals(
+            GameAction.BestTimesClicked,
+            receivedAction,
+        )
+    }
+
+    @Test
+    fun visibleBestTimesDialogShowsRankedTimesAndDismisses() {
+        var wasDismissed = false
+
+        composeTestRule.setContent {
+            NQueensTheme {
+                BestTimesDialog(
+                    boardSize = 4,
+                    bestTimes = listOf(8_000L, 11_000L),
+                    onDismissRequest = {
+                        wasDismissed = true
+                    },
+                )
+            }
+        }
+
+        composeTestRule
+            .onNodeWithText("Best times - 4 × 4")
+            .assertExists()
+        composeTestRule
+            .onNodeWithText("1. 00:08")
+            .assertExists()
+        composeTestRule
+            .onNodeWithText("2. 00:11")
+            .assertExists()
+
+        composeTestRule
+            .onNodeWithText("Close")
+            .performClick()
+
+        assertEquals(true, wasDismissed)
+    }
+
     private fun setGameContent(
         state: GameUiState,
         onAction: (GameAction) -> Unit = {},

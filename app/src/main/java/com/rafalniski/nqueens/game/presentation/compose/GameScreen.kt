@@ -62,13 +62,25 @@ fun GameScreen(
                     },
                 )
 
-                TextButton(
-                    onClick = {
-                        onAction(GameAction.ResetClicked)
-                    },
-                    enabled = state.queens.isNotEmpty(),
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text(text = stringResource(R.string.game_reset))
+                    TextButton(
+                        onClick = {
+                            onAction(GameAction.BestTimesClicked)
+                        },
+                    ) {
+                        Text(text = stringResource(R.string.game_best_times))
+                    }
+
+                    TextButton(
+                        onClick = {
+                            onAction(GameAction.ResetClicked)
+                        },
+                        enabled = state.queens.isNotEmpty(),
+                    ) {
+                        Text(text = stringResource(R.string.game_reset))
+                    }
                 }
             }
 
@@ -136,6 +148,16 @@ fun GameScreen(
             elapsedTimeMillis = state.elapsedTimeMillis,
             onPlayAgainClick = {
                 onAction(GameAction.PlayAgainClicked)
+            },
+        )
+    }
+
+    if (state.isBestTimesVisible) {
+        BestTimesDialog(
+            boardSize = state.boardSize,
+            bestTimes = state.bestTimes,
+            onDismissRequest = {
+                onAction(GameAction.BestTimesDismissed)
             },
         )
     }
