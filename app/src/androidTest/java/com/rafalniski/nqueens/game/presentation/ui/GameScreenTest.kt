@@ -1,7 +1,11 @@
 package com.rafalniski.nqueens.game.presentation.ui
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -112,6 +116,50 @@ class GameScreenTest {
     }
 
     @Test
+    fun conflictBannerDoesNotMoveChessBoard() {
+        var state by mutableStateOf(
+            GameUiState(
+                game = GameState(boardSize = 4),
+                status = GameStatus.Playing,
+            ),
+        )
+
+        composeTestRule.setContent {
+            NQueensTheme {
+                GameScreen(
+                    state = state,
+                    onAction = {},
+                )
+            }
+        }
+
+        val boardTopBeforeConflict = composeTestRule
+            .onNodeWithContentDescription("File b, rank 4, empty")
+            .getUnclippedBoundsInRoot()
+            .top
+
+        composeTestRule.runOnIdle {
+            state = GameUiState(
+                game = GameState(
+                    boardSize = 4,
+                    queens = setOf(
+                        Position(row = 0, column = 0),
+                        Position(row = 0, column = 3),
+                    ),
+                ),
+                status = GameStatus.Playing,
+            )
+        }
+
+        val boardTopWithConflict = composeTestRule
+            .onNodeWithContentDescription("File b, rank 4, empty")
+            .getUnclippedBoundsInRoot()
+            .top
+
+        assertEquals(boardTopBeforeConflict, boardTopWithConflict)
+    }
+
+    @Test
     fun solvedGameShowsDialogAndPlayAgainEmitsAction() {
         var receivedAction: GameAction? = null
 
@@ -134,6 +182,29 @@ class GameScreenTest {
 
         assertEquals(
             GameAction.PlayAgainClicked,
+            receivedAction,
+        )
+    }
+
+    @Test
+    fun victoryDialogBestTimesEmitsBestTimesAction() {
+        var receivedAction: GameAction? = null
+
+        setGameContent(
+            state = GameUiState(
+                game = solvedFourByFourGame(),
+            ),
+            onAction = { action ->
+                receivedAction = action
+            },
+        )
+
+        composeTestRule
+            .onNodeWithText("View best times")
+            .performClick()
+
+        assertEquals(
+            GameAction.BestTimesClicked,
             receivedAction,
         )
     }
@@ -209,7 +280,7 @@ class GameScreenTest {
         )
 
         composeTestRule
-            .onNodeWithText("Best times")
+            .onNodeWithContentDescription("Open best times")
             .assertIsDisplayed()
             .performClick()
 
@@ -236,13 +307,16 @@ class GameScreenTest {
         }
 
         composeTestRule
-            .onNodeWithText("Best times - 4 × 4")
+            .onNodeWithText("Best times")
             .assertExists()
         composeTestRule
-            .onNodeWithText("1. 00:08")
+            .onNodeWithText("4 × 4")
             .assertExists()
         composeTestRule
-            .onNodeWithText("2. 00:11")
+            .onNodeWithText("00:08")
+            .assertExists()
+        composeTestRule
+            .onNodeWithText("00:11")
             .assertExists()
 
         composeTestRule

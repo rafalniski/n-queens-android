@@ -6,35 +6,29 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.res.pluralStringResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.rafalniski.nqueens.R
 import com.rafalniski.nqueens.game.domain.GameState
 import com.rafalniski.nqueens.game.domain.Position
 import com.rafalniski.nqueens.game.presentation.GameAction
 import com.rafalniski.nqueens.game.presentation.GameStatus
 import com.rafalniski.nqueens.game.presentation.GameUiState
-import com.rafalniski.nqueens.game.presentation.formatElapsedTime
 import com.rafalniski.nqueens.game.presentation.ui.components.BestTimesDialog
-import com.rafalniski.nqueens.game.presentation.ui.components.BoardSizeSelector
 import com.rafalniski.nqueens.game.presentation.ui.components.ChessBoard
+import com.rafalniski.nqueens.game.presentation.ui.components.ConflictBanner
 import com.rafalniski.nqueens.game.presentation.ui.components.GameActionControl
+import com.rafalniski.nqueens.game.presentation.ui.components.GameHeader
+import com.rafalniski.nqueens.game.presentation.ui.components.GameStatusCard
 import com.rafalniski.nqueens.game.presentation.ui.components.GameWonDialog
 import com.rafalniski.nqueens.game.presentation.ui.theme.AppDimensions
 import com.rafalniski.nqueens.game.presentation.ui.theme.NQueensTheme
@@ -65,69 +59,25 @@ fun GameScreen(
                 AppDimensions.contentSpacing,
             ),
         ) {
-            Text(
-                text = stringResource(R.string.game_title),
-                style = MaterialTheme.typography.headlineMedium,
+            GameHeader(
+                onBestTimesClick = {
+                    onAction(GameAction.BestTimesClicked)
+                },
             )
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                BoardSizeSelector(
-                    selectedBoardSize = state.boardSize,
-                    enabled = state.status == GameStatus.Ready,
-                    onBoardSizeSelected = { boardSize ->
-                        onAction(GameAction.BoardSizeSelected(boardSize))
-                    },
-                )
-
-                TextButton(
-                    onClick = {
-                        onAction(GameAction.BestTimesClicked)
-                    },
-                ) {
-                    Text(text = stringResource(R.string.game_best_times))
-                }
-            }
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = pluralStringResource(
-                        R.plurals.game_queens_left,
-                        state.queensLeft,
-                        state.queensLeft,
-                    ),
-                    style = MaterialTheme.typography.titleMedium,
-                )
-
-                Text(
-                    text = stringResource(
-                        R.string.game_elapsed_time,
-                        formatElapsedTime(state.elapsedTimeMillis),
-                    ),
-                    style = MaterialTheme.typography.titleMedium,
-                )
-            }
-
-            Text(
-                text = if (state.conflictingQueens.isEmpty()) {
-                    ""
-                } else {
-                    pluralStringResource(
-                        R.plurals.game_conflicting_queens,
-                        state.conflictingQueens.size,
-                        state.conflictingQueens.size,
-                    )
+            GameStatusCard(
+                boardSize = state.boardSize,
+                queensLeft = state.queensLeft,
+                elapsedTimeMillis = state.elapsedTimeMillis,
+                boardSizeSelectionEnabled =
+                    state.status == GameStatus.Ready,
+                onBoardSizeSelected = { boardSize ->
+                    onAction(GameAction.BoardSizeSelected(boardSize))
                 },
-                minLines = 1,
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodyLarge,
+            )
+
+            ConflictBanner(
+                conflictingQueensCount = state.conflictingQueens.size,
             )
 
             BoxWithConstraints(
@@ -184,11 +134,14 @@ fun GameScreen(
         }
     }
 
-    if (state.isSolved) {
+    if (state.isSolved && !state.isBestTimesVisible) {
         GameWonDialog(
             elapsedTimeMillis = state.elapsedTimeMillis,
             onPlayAgainClick = {
                 onAction(GameAction.PlayAgainClicked)
+            },
+            onViewBestTimesClick = {
+                onAction(GameAction.BestTimesClicked)
             },
         )
     }

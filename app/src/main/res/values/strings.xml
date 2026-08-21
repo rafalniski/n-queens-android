@@ -2,6 +2,7 @@
 <resources>
     <string name="app_name">N-Queens</string>
     <string name="game_title">N-Queens</string>
+    <string name="game_subtitle">Place every queen without conflicts</string>
     <string name="game_toggle_queen_action">Place or remove queen</string>
     <string name="game_empty_cell_description">File %1$s, rank %2$d, empty</string>
     <string name="game_queen_cell_description">File %1$s, rank %2$d, queen</string>
@@ -11,9 +12,14 @@
     <string name="game_reset">Reset game</string>
     <string name="game_won_title">Puzzle solved!</string>
     <string name="game_won_message">Great job! Your time was %1$s.</string>
+    <string name="game_won_encouragement">Every queen is safe.</string>
+    <string name="game_your_time">Your time</string>
     <string name="game_play_again">Play again</string>
+    <string name="game_view_best_times">View best times</string>
     <string name="game_elapsed_time">Time: %1$s</string>
     <string name="game_best_times">Best times</string>
+    <string name="game_open_best_times">Open best times</string>
+    <string name="game_board_dimensions">%1$d × %2$d</string>
     <string name="game_best_times_title">Best times - %1$d × %2$d</string>
     <string name="game_best_times_empty">No completed games yet.</string>
     <string name="game_best_time_entry">%1$d. %2$s</string>

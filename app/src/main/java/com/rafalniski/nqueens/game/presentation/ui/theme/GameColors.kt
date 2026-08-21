@@ -9,4 +9,8 @@ object GameColors {
     val secondaryAction = Color(0xFFB37A3D)
     val secondaryActionShadow = Color(0xFF754A22)
     val onSecondaryAction = Color.White
+    val gold = Color(0xFFD7A928)
+    val silver = Color(0xFFAEB4BC)
+    val bronze = Color(0xFFB87333)
+    val onPodium = Color(0xFF1F1A0A)
 }
