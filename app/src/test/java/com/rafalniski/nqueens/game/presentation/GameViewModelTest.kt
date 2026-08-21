@@ -4,6 +4,10 @@ import com.rafalniski.nqueens.game.domain.Position
 import com.rafalniski.nqueens.game.testing.FakeBestTimesRepository
 import com.rafalniski.nqueens.game.testing.MainDispatcherRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -117,6 +121,43 @@ class GameViewModelTest {
             2_500L,
             viewModel.uiState.value.elapsedTimeMillis,
         )
+    }
+
+    @Test
+    fun `winning publishes solved game and final time together`() = runTest(
+        mainDispatcherRule.dispatcher,
+    ) {
+        val viewModel = createViewModel(initialBoardSize = 4)
+        val emittedStates = mutableListOf<GameUiState>()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.uiState.collect(emittedStates::add)
+        }
+
+        viewModel.onAction(GameAction.StartGameClicked)
+        viewModel.onAction(
+            GameAction.CellTapped(Position(row = 0, column = 1)),
+        )
+        testScheduler.advanceTimeBy(2_500L)
+        testScheduler.runCurrent()
+        viewModel.onAction(
+            GameAction.CellTapped(Position(row = 1, column = 3)),
+        )
+        viewModel.onAction(
+            GameAction.CellTapped(Position(row = 2, column = 0)),
+        )
+
+        val statesBeforeWinningMove = emittedStates.size
+        viewModel.onAction(
+            GameAction.CellTapped(Position(row = 3, column = 2)),
+        )
+
+        val winStates = emittedStates
+            .drop(statesBeforeWinningMove)
+            .filter { it.status == GameStatus.Won }
+
+        assertEquals(1, winStates.size)
+        assertTrue(winStates.single().isSolved)
+        assertEquals(2_500L, winStates.single().elapsedTimeMillis)
     }
 
     @Test

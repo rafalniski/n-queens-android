@@ -80,23 +80,23 @@ class GameViewModel(
         )
         val isSolved = NQueensEngine.isSolved(updatedGame)
 
-        _uiState.update { state ->
-            state.copy(
-                game = updatedGame,
-                status = if (isSolved) {
-                    GameStatus.Won
-                } else {
-                    GameStatus.Playing
-                },
-            )
-        }
-
         if (isSolved) {
             val elapsedTimeMillis = stopTimer()
+            _uiState.update { state ->
+                state.copy(
+                    game = updatedGame,
+                    status = GameStatus.Won,
+                    elapsedTimeMillis = elapsedTimeMillis,
+                )
+            }
             saveCompletedTime(
                 boardSize = updatedGame.boardSize,
                 elapsedTimeMillis = elapsedTimeMillis,
             )
+        } else {
+            _uiState.update { state ->
+                state.copy(game = updatedGame)
+            }
         }
     }
 
@@ -126,15 +126,7 @@ class GameViewModel(
         timerJob?.cancel()
         timerJob = null
 
-        val elapsedTimeMillis = gameTimer.stop()
-
-        _uiState.update { state ->
-            state.copy(
-                elapsedTimeMillis = elapsedTimeMillis,
-            )
-        }
-
-        return elapsedTimeMillis
+        return gameTimer.stop()
     }
 
     private fun updateElapsedTime() {
