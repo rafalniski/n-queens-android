@@ -12,10 +12,6 @@ An Android puzzle game based on the N-Queens problem, built with Kotlin and Jetp
   <img src="docs/screenshots/game-won.png" width="30%" alt="Puzzle solved dialog" />
 </p>
 
-## Demo
-
-[Watch the gameplay video](docs/video/nqueens-android-video.mp4)
-
 ## Features
 
 - Board sizes from `4 × 4` to `12 × 12`
