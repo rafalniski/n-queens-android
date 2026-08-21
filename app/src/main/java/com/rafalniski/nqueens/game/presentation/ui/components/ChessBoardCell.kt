@@ -2,6 +2,7 @@ package com.rafalniski.nqueens.game.presentation.ui.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.KeyframesSpec
 import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -61,15 +62,7 @@ fun ChessBoardCell(
         if (isConflicting) {
             shakeOffset.animateTo(
                 targetValue = 0f,
-                animationSpec = keyframes {
-                    durationMillis = ConflictShakeDurationMillis
-                    -shakeDistance at 40
-                    shakeDistance at 80
-                    -shakeDistance at 120
-                    shakeDistance at 160
-                    -shakeDistance / 2 at 200
-                    shakeDistance / 2 at 240
-                },
+                animationSpec = conflictShakeSpec(shakeDistance),
             )
         } else {
             shakeOffset.snapTo(0f)
@@ -190,6 +183,22 @@ fun ChessBoardCell(
                     .clearAndSetSemantics {},
             )
         }
+    }
+}
+
+private fun conflictShakeSpec(
+    shakeDistance: Float,
+): KeyframesSpec<Float> {
+    val reducedShakeDistance = shakeDistance / 2f
+
+    return keyframes {
+        durationMillis = ConflictShakeDurationMillis
+        (-shakeDistance) at 40
+        shakeDistance at 80
+        (-shakeDistance) at 120
+        shakeDistance at 160
+        (-reducedShakeDistance) at 200
+        reducedShakeDistance at 240
     }
 }
 
