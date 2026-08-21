@@ -1,4 +1,4 @@
-package com.rafalniski.nqueens.game.presentation.timer
+package com.rafalniski.nqueens.game.presentation
 
 import kotlin.test.Test
 import kotlin.test.assertEquals

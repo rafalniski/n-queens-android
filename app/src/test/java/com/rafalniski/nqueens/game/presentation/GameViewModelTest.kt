@@ -1,7 +1,6 @@
 package com.rafalniski.nqueens.game.presentation
 
 import com.rafalniski.nqueens.game.domain.Position
-import com.rafalniski.nqueens.game.presentation.timer.GameTimer
 import com.rafalniski.nqueens.game.testing.FakeBestTimesRepository
 import com.rafalniski.nqueens.game.testing.MainDispatcherRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi

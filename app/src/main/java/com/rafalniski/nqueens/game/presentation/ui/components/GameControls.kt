@@ -8,7 +8,7 @@ import com.rafalniski.nqueens.game.presentation.GameStatus
 import com.rafalniski.nqueens.game.presentation.ui.theme.GameColors
 
 @Composable
-fun GameActionControl(
+fun GameControls(
     status: GameStatus,
     onStartClick: () -> Unit,
     onResetClick: () -> Unit,

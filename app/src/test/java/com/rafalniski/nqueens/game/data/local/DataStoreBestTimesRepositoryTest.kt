@@ -11,7 +11,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class PreferencesBestTimesRepositoryTest {
+class DataStoreBestTimesRepositoryTest {
     @get:Rule
     val temporaryFolder = TemporaryFolder()
 
@@ -23,7 +23,7 @@ class PreferencesBestTimesRepositoryTest {
                 File(temporaryFolder.root, "best_times.preferences_pb")
             },
         )
-        val repository = PreferencesBestTimesRepository(dataStore)
+        val repository = DataStoreBestTimesRepository(dataStore)
 
         (11L downTo 1L).forEach { elapsedTimeMillis ->
             repository.saveCompletedTime(

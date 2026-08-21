@@ -26,7 +26,7 @@ import com.rafalniski.nqueens.game.presentation.GameUiState
 import com.rafalniski.nqueens.game.presentation.ui.components.BestTimesDialog
 import com.rafalniski.nqueens.game.presentation.ui.components.ChessBoard
 import com.rafalniski.nqueens.game.presentation.ui.components.ConflictBanner
-import com.rafalniski.nqueens.game.presentation.ui.components.GameActionControl
+import com.rafalniski.nqueens.game.presentation.ui.components.GameControls
 import com.rafalniski.nqueens.game.presentation.ui.components.GameHeader
 import com.rafalniski.nqueens.game.presentation.ui.components.GameStatusCard
 import com.rafalniski.nqueens.game.presentation.ui.components.GameWonDialog
@@ -118,7 +118,7 @@ fun GameScreen(
                             .weight(1f),
                         contentAlignment = Alignment.Center,
                     ) {
-                        GameActionControl(
+                        GameControls(
                             status = state.status,
                             onStartClick = {
                                 onAction(GameAction.StartGameClicked)

@@ -6,7 +6,6 @@ import com.rafalniski.nqueens.game.domain.BestTimesRepository
 import com.rafalniski.nqueens.game.domain.GameState
 import com.rafalniski.nqueens.game.domain.NQueensEngine
 import com.rafalniski.nqueens.game.domain.Position
-import com.rafalniski.nqueens.game.presentation.timer.GameTimer
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive

@@ -21,7 +21,7 @@ private val Context.bestTimesDataStore by preferencesDataStore(
     name = "best_times",
 )
 
-class PreferencesBestTimesRepository(
+class DataStoreBestTimesRepository(
     private val dataStore: DataStore<Preferences>,
 ) : BestTimesRepository {
     constructor(context: Context) : this(
