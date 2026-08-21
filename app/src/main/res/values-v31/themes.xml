@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.NQueens" parent="android:style/Theme.Material.Light.NoActionBar">
-        <item name="android:fontFamily">sans</item>
-        <item name="android:windowLightStatusBar">true</item>
-    </style>
-
     <style name="Theme.NQueens.Starting" parent="Theme.NQueens">
-        <item name="android:windowBackground">@drawable/splash_screen</item>
+        <item name="android:windowSplashScreenBackground">@color/launch_background</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="android:windowSplashScreenIconBackgroundColor">@color/launcher_background</item>
+        <item name="android:windowSplashScreenAnimationDuration">200</item>
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:statusBarColor">@color/launch_background</item>
         <item name="android:navigationBarColor">@color/launch_background</item>
