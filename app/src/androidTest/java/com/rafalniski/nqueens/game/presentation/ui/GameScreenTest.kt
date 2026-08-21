@@ -132,6 +132,7 @@ class GameScreenTest {
                 )
             }
         }
+        composeTestRule.mainClock.advanceTimeByFrame()
 
         val boardTopBeforeConflict = composeTestRule
             .onNodeWithContentDescription("File b, rank 4, empty")
@@ -305,6 +306,7 @@ class GameScreenTest {
                 )
             }
         }
+        composeTestRule.mainClock.advanceTimeByFrame()
 
         composeTestRule
             .onNodeWithText("Best times")
@@ -338,6 +340,7 @@ class GameScreenTest {
                 )
             }
         }
+        composeTestRule.mainClock.advanceTimeByFrame()
     }
 
     private fun solvedFourByFourGame(): GameState {
